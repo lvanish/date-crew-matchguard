@@ -16,6 +16,8 @@ smoker.") into structured reasons and save them to the client's rejection histor
 ## Live Demo
 
 - Frontend: https://date-crew-matchguard.vercel.app/
+- Demo Video: https://youtu.be/lGuYglGJ2v0
+- GitHub: https://github.com/lvanish/date-crew-matchguard
 - Backend API: https://date-crew-matchguard.onrender.com
 - Swagger: https://date-crew-matchguard.onrender.com/docs
 
@@ -23,6 +25,12 @@ The live prototype runs on Vercel + Render and uses Supabase PostgreSQL. Gemini 
 structured rejection-feedback extraction.
 
 ## Assessment Demo
+
+Live prototype:
+https://date-crew-matchguard.vercel.app/
+
+Demo video:
+https://youtu.be/lGuYglGJ2v0
 
 Suggested flow:
 
