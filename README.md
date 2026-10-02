@@ -13,6 +13,38 @@ It can also turn a client's free-text rejection feedback ("Nice profile but I do
 smoker.") into structured reasons and save them to the client's rejection history. See
 [AI usage](#ai-usage).
 
+## Live Demo
+
+- Frontend: https://date-crew-matchguard.vercel.app/
+- Backend API: https://date-crew-matchguard.onrender.com
+- Swagger: https://date-crew-matchguard.onrender.com/docs
+
+The live prototype runs on Vercel + Render and uses Supabase PostgreSQL. Gemini is used for
+structured rejection-feedback extraction.
+
+## Assessment Demo
+
+Suggested flow:
+
+1. **Check Match** → Rahul → Ananya → **PASS**
+2. **Check Match** → Rahul → Ishita → **BLOCK**
+3. **Check Match** → Rahul → Kavya → **REVIEW** (missing data)
+4. **Analyze Rejection** → use the multi-reason example: "The profile looks good, but I
+   definitely don't want someone who smokes and I cannot move to Bangalore."
+5. **Impact** → show the assessment baseline and the 19 deterministic demo checks
+
+How to read the numbers on the Impact tab:
+
+- **Assessment-provided baseline:** the monthly figures from the assessment brief
+  (1,000 profiles shared, 690 rejected, 35% preference-related, ~242 estimated). MatchGuard
+  did not measure these.
+- **Deterministic demo activity:** the PASS / REVIEW / BLOCK and conflict counts come from
+  19 designed demo scenarios plus any checks run by hand. They show the tool working, not
+  real matchmaking.
+- **Actual production business results:** none yet. MatchGuard has not been used in real
+  matchmaking, and there is no evidence that it has improved the preference-violation
+  rejection rate or any other business metric.
+
 ## Architecture
 
 ```
@@ -137,7 +169,8 @@ Every check is saved in the `match_checks` and `match_conflicts` tables.
 2. Paste what the client said into **Rejection feedback**.
 3. Click **Analyze feedback**.
 
-The result lists each structured reason (attribute, strength, kind, explanation) and the
+The result lists each structured reason (`attribute`, `value`, `preference_type`, `kind`,
+`explanation`) and the
 raw feedback. If anything was ambiguous, a **⚠ Needs review** banner asks the matchmaker
 to confirm with the client. Each analysis is saved in the `rejection_feedback` table.
 
@@ -227,7 +260,7 @@ Example: "Nice profile but I don't want a smoker." becomes
 }
 ```
 
-So the attribute is Smoking, the strength is DEAL_BREAKER, and the kind is VIOLATION.
+The attribute is Smoking, the preference type is DEAL_BREAKER, and the kind is VIOLATION.
 
 ### AI Providers
 
