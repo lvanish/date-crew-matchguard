@@ -5,6 +5,7 @@ from app.core.config import DEFAULT_GEMINI_MODEL, DEFAULT_OPENAI_MODEL, Settings
 FAKE_OPENAI_KEY = "sk-test-not-a-real-key"
 FAKE_GEMINI_KEY = "AIza-test-not-a-real-key"
 ENV_NAMES = (
+    "CORS_ORIGINS",
     "DATABASE_URL",
     "FEEDBACK_EXTRACTOR",
     "OPENAI_API_KEY",
@@ -57,6 +58,33 @@ def test_defaults_without_environment() -> None:
     assert settings.OPENAI_MODEL == DEFAULT_OPENAI_MODEL == "gpt-6-luna"
     assert settings.OPENAI_API_KEY == ""
     assert settings.DATABASE_URL.startswith("postgresql+psycopg://")
+
+
+def test_cors_origins_default_to_local_frontend() -> None:
+    assert Settings().CORS_ORIGINS == ("http://localhost:5173",)
+
+
+@pytest.mark.parametrize("raw", ["", "   ", " , ,"])
+def test_blank_cors_origins_fall_back_to_default(monkeypatch: pytest.MonkeyPatch, raw: str) -> None:
+    monkeypatch.setenv("CORS_ORIGINS", raw)
+
+    assert Settings().CORS_ORIGINS == ("http://localhost:5173",)
+
+
+def test_cors_origins_accept_comma_separated_list(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv(
+        "CORS_ORIGINS",
+        " http://localhost:5173 , https://example.vercel.app/,,https://example.vercel.app",
+    )
+
+    assert Settings().CORS_ORIGINS == ("http://localhost:5173", "https://example.vercel.app")
+
+
+def test_cors_wildcard_is_rejected(monkeypatch: pytest.MonkeyPatch) -> None:
+    monkeypatch.setenv("CORS_ORIGINS", "http://localhost:5173,*")
+
+    with pytest.raises(ValueError, match="'\\*' is not allowed"):
+        Settings()
 
 
 def test_api_keys_are_not_exposed_by_repr_or_str(monkeypatch: pytest.MonkeyPatch) -> None:

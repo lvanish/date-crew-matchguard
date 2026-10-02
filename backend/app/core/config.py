@@ -10,6 +10,16 @@ DEFAULT_OPENAI_MODEL = "gpt-6-luna"
 DEFAULT_GEMINI_MODEL = "gemini-3.5-flash-lite"
 DEFAULT_FEEDBACK_EXTRACTOR = "gemini"
 FEEDBACK_EXTRACTORS = ("demo", "openai", "gemini")
+DEFAULT_CORS_ORIGINS = "http://localhost:5173"
+
+
+def _cors_origins() -> tuple[str, ...]:
+    raw = os.getenv("CORS_ORIGINS", "").strip() or DEFAULT_CORS_ORIGINS
+    # Browsers send Origin without a trailing slash, so "https://x.app/" would never match.
+    origins = tuple(dict.fromkeys(o.strip().rstrip("/") for o in raw.split(",") if o.strip()))
+    if "*" in origins:
+        raise ValueError("CORS_ORIGINS must list explicit origins; '*' is not allowed.")
+    return origins or (DEFAULT_CORS_ORIGINS,)
 
 
 def _feedback_extractor() -> str:
@@ -24,6 +34,7 @@ def _feedback_extractor() -> str:
 @dataclass(frozen=True)
 class Settings:
     DATABASE_URL: str = field(default_factory=lambda: os.getenv("DATABASE_URL") or DEFAULT_DATABASE_URL)
+    CORS_ORIGINS: tuple[str, ...] = field(default_factory=_cors_origins)
     FEEDBACK_EXTRACTOR: str = field(default_factory=_feedback_extractor)
     OPENAI_API_KEY: str = field(
         default_factory=lambda: os.getenv("OPENAI_API_KEY", "").strip(), repr=False

@@ -305,6 +305,7 @@ Settings are read from `.env` (or the environment):
 | Variable | Default | Purpose |
 |---|---|---|
 | `DATABASE_URL` | `postgresql+psycopg://postgres:postgres@localhost:5432/matchguard` | Database |
+| `CORS_ORIGINS` | `http://localhost:5173` | Comma-separated frontend origins allowed by CORS, e.g. `http://localhost:5173,https://example.vercel.app`. `*` is rejected at startup |
 | `FEEDBACK_EXTRACTOR` | `gemini` | `demo`, `gemini` or `openai`; any other value fails at startup |
 | `GEMINI_API_KEY` | empty | Only needed for `gemini`. The app still starts without it; analysis then returns 503 |
 | `GEMINI_MODEL` | `gemini-3.5-flash-lite` | Model for the `gemini` provider |
