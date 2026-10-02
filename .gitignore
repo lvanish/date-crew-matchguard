@@ -1,0 +1,14 @@
+# Secrets: real .env files hold OPENAI_API_KEY and must never be committed.
+.env
+.env.*
+!.env.example
+
+# Python
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+
+# Frontend
+node_modules/
+dist/
